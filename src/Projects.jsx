@@ -79,7 +79,7 @@ export default function Projects() {
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
-    fetch('/all_project_code.json')
+    fetch('./all_project_code.json')
       .then((res) => res.json())
       .then(setData)
       .catch((err) => console.error('Failed to load project code:', err));
