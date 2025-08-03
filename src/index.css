@@ -1,0 +1,209 @@
+body {
+  margin: 0;
+  background-color: black;
+  color: white;
+  font-family: monospace;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+
+.console {
+  max-width: 800px;
+  margin: auto;
+}
+
+.console-log {
+  min-height: 50vh;
+  margin-bottom: 1rem;
+}
+
+.input-line {
+  color: #00ffcc;
+}
+
+.console-input input {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-family: monospace;
+  outline: none;
+  width: 90%;
+}
+
+.response {
+  margin-left: 1rem;
+  opacity: 0.8;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.glitch {
+  animation: glitchy 0.8s infinite alternate;
+  opacity: 0.6;
+}
+
+@keyframes glitchy {
+  from {
+    text-shadow: 2px 0 red;
+  }
+  to {
+    text-shadow: -2px 0 blue;
+  }
+}
+
+.whoami p {
+  margin: 0.2rem 0;
+}
+
+.project-card {
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.project-card hr {
+  border: none;
+  border-top: 1px dashed #444;
+  margin-top: 0.5rem;
+}
+
+.glitch {
+  color: #f0f;
+  text-shadow: 1px 0 red, -1px 0 blue;
+  animation: glitchy 0.3s infinite alternate;
+}
+
+@keyframes glitchy {
+  from {
+    transform: translateX(-0.5px);
+  }
+  to {
+    transform: translateX(0.5px);
+  }
+}
+
+.lore {
+  font-style: italic;
+  opacity: 0.5;
+  margin-top: 1rem;
+}
+
+.command-error {
+  color: red;
+  opacity: 0.6;
+}
+
+.console-log {
+  min-height: 40vh;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 1rem;
+  margin-bottom: 2rem;
+  scrollbar-width: thin;
+  scrollbar-color: #333 #000;
+}
+
+.input-line {
+  color: #0ff;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+/* .blinking {
+  color: #666;
+  opacity: 0.5;
+  font-style: italic;
+  animation: blink 1s steps(1) infinite;
+  margin-top: 1rem;
+} */
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 0.5;
+  }
+  50.1%, 100% {
+    opacity: 0;
+  }
+}
+
+.loading-dots {
+  color: #666;
+  font-style: italic;
+  margin-top: 1rem;
+  letter-spacing: 1px;
+}
+
+.loading-dots::after {
+  content: '';
+  display: inline-block;
+  width: 1ch;
+  text-align: left;
+  animation: dots 1.2s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0% {
+    content: '';
+  }
+  25% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  75% {
+    content: '...';
+  }
+  100% {
+    content: '';
+  }
+}
+
+.glitch-loader {
+  margin-top: 1rem;
+  font-weight: bold;
+  color: #f33;
+  animation: glitchy-text 0.5s infinite alternate;
+  text-shadow: 1px 0 red, -1px 0 blue;
+}
+
+@keyframes glitchy-text {
+  0% {
+    letter-spacing: 1px;
+    transform: translateX(0);
+  }
+  50% {
+    letter-spacing: 2px;
+    transform: translateX(-1px);
+  }
+  100% {
+    letter-spacing: 0.5px;
+    transform: translateX(1px);
+  }
+}
+
+@keyframes floatAmp {
+  from {
+    transform: translateY(0) scale(1);
+  }
+  to {
+    transform: translateY(-10px) scale(1.1);
+  }
+}
+
+.suggestion {
+  color: #666;
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-left: 2rem;
+  opacity: 0.6;
+}
+

@@ -1,0 +1,72 @@
+
+.project-entry {
+  margin-bottom: 3rem;
+  opacity: 0.9;
+}
+
+.meta, .summary {
+  font-style: italic;
+  color: #aaa;
+  margin-bottom: 0.5rem;
+}
+
+.project-content {
+  margin-top: 1rem;
+  background: #111;
+  padding: 1rem;
+  border-left: 4px solid #0ff;
+}
+
+.code-block {
+  margin-bottom: 1.5rem;
+}
+
+.code-header {
+  color: #0ff;
+  font-weight: bold;
+}
+
+pre {
+  background: #000;
+  color: #0f0;
+  padding: 1rem;
+  overflow-x: auto;
+  font-family: monospace;
+}
+
+.download-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #f0f;
+  text-decoration: none;
+}
+
+.download-link:hover {
+  text-decoration: underline;
+}
+
+.fig-preview {
+  width: 100%;
+  border: 2px dashed #666;
+  margin-top: 1rem;
+}
+.glitch-in {
+  animation: glitchFade 0.4s ease-in-out forwards;
+  position: relative;
+}
+
+@keyframes glitchFade {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) skewX(3deg);
+    filter: hue-rotate(30deg) contrast(200%);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.02) skewX(-2deg);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
