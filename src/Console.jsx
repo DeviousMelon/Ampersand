@@ -35,8 +35,12 @@ export default function Console() {
     //     left: Math.random() * 100 + "vw",
     //     rotation: Math.random() * 360,
     //   }));
-    //   setAmpersands(newAmps);
-    //   setTimeout(() => setAmpersands([]), 5000);
+    //setAmpersands(newAmps);
+    const newEntry = { id: log.length, input };
+    setTimeout(() => {
+      setLog((prevLog) => [...prevLog, newEntry]);
+      setIsRunning(false);
+    }, 500);
   };
 
   // const playSound = (file) => {
