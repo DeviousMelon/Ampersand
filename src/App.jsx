@@ -1,10 +1,8 @@
 import { useState } from "react";
-import AmpersandAteMyLayers from "./AmpersandAteMyLayers";
 import WhoAmI from "./WhoAmI";
 import Projects from "./Projects";
 
 const COMMANDS = [
-  "run(TheAmpersandAteMyLayers)",
   "run(whoami)",
   "render(Projects)",
   "loop(&)",
@@ -69,8 +67,6 @@ export default function App() {
 
   const renderResponse = (input) => {
     switch (input) {
-      case "run(TheAmpersandAteMyLayers)":
-        return <AmpersandAteMyLayers />;
       case "run(whoami)":
         return <WhoAmI />;
       case "render(Projects)":
@@ -100,7 +96,6 @@ export default function App() {
       case "help()":
         return (
           <ul>
-            <li>run(TheAmpersandAteMyLayers)</li>
             <li>run(whoami)</li>
             <li>render(Projects)</li>
             <li>loop(&)</li>
