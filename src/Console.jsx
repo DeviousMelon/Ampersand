@@ -21,6 +21,7 @@ export default function Console() {
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(null);
   const [suggestion, setSuggestion] = useState("");
+  const [inputLocked, setInputLocked] = useState(false);
 
   const handleCommand = () => {
     const input = command.trim();
@@ -30,7 +31,6 @@ export default function Console() {
     setCommand("");
     setHistory((prev) => [...prev, input]);
     setHistoryIndex(null);
-
     setIsRunning(true);
 
     if (input === "loop(&)" || input === "summon(&)") {
@@ -50,11 +50,7 @@ export default function Console() {
       audio.play().catch(() => {});
     };
 
-    if (input === "loop(&)") {
-      playSound("/glitch.mp3");
-    } else {
-      playSound("/blip.mp3");
-    }
+    playSound(input === "loop(&)" ? "/glitch.mp3" : "/blip.mp3");
 
     const newEntry = { id: log.length, input };
 
@@ -70,7 +66,7 @@ export default function Console() {
       case "run(whoami)":
         return <WhoAmI />;
       case "render(Projects)":
-        return <Projects />;
+        return <Projects setInputLocked={setInputLocked} />;
       case "loop(&)":
         return (
           <p className="glitch">
@@ -96,13 +92,9 @@ export default function Console() {
       case "help()":
         return (
           <ul>
-            <li>run(whoami)</li>
-            <li>render(Projects)</li>
-            <li>loop(&)</li>
-            <li>feed(layers)</li>
-            <li>summon(&)</li>
-            <li>undo(everything)</li>
-            <li>help()</li>
+            {COMMANDS.map((cmd) => (
+              <li key={cmd}>{cmd}</li>
+            ))}
           </ul>
         );
       default:
@@ -121,7 +113,6 @@ export default function Console() {
             <div className="response">{renderResponse(entry.input)}</div>
           </div>
         ))}
-
         {isRunning && (
           <>
             {currentCommand === "loop(&)" ? (
@@ -141,7 +132,6 @@ export default function Console() {
           onChange={(e) => {
             const value = e.target.value;
             setCommand(value);
-
             const match = COMMANDS.find((cmd) => cmd.startsWith(value));
             setSuggestion(match && match !== value ? match : "");
           }}
@@ -149,18 +139,16 @@ export default function Console() {
             if (e.key === "Enter") {
               e.preventDefault();
               handleCommand();
-            } else if (e.key === "ArrowUp") {
+            } else if (!inputLocked && e.key === "ArrowUp") {
               e.preventDefault();
-              if (history.length === 0) return;
               const newIndex =
                 historyIndex === null
                   ? history.length - 1
                   : Math.max(0, historyIndex - 1);
               setHistoryIndex(newIndex);
               setCommand(history[newIndex]);
-            } else if (e.key === "ArrowDown") {
+            } else if (!inputLocked && e.key === "ArrowDown") {
               e.preventDefault();
-              if (history.length === 0) return;
               const newIndex =
                 historyIndex === null
                   ? null
