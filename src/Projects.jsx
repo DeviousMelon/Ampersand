@@ -26,7 +26,7 @@ export default function Projects({ setInputLocked }) {
       key: "AOOP_Project",
       name: "AOOP_Project",
       description:
-        "a banking system that thinks in objects and forgets withdrawals.",
+        "a banking system simulation featuring classes for customers, accounts, transactions, and ATM interface logic.",
       tools: "Java, IntelliJ",
       download: "/AOOP_Project.zip",
     },
@@ -34,7 +34,7 @@ export default function Projects({ setInputLocked }) {
       key: "K00300249",
       name: "K00300249",
       description:
-        "a surreal personal site prototype that mutates with every scroll.",
+        "a prototype personal portfolio website exploring scroll-based transitions, layout responsiveness, and identity themes.",
       tools: "HTML, CSS, JS",
       download: "/K00300249.zip",
     },
@@ -42,21 +42,23 @@ export default function Projects({ setInputLocked }) {
       key: "OOP_Project",
       name: "OOP_Project",
       description:
-        "a recursive object model that can’t stop classifying itself.",
+        "a structured Java application using interfaces and inheritance to demonstrate object-oriented programming concepts.",
       tools: "Java, Interfaces",
       download: "/OOP_Project.zip",
     },
     {
       key: "Snake",
       name: "Snake",
-      description: "a minimalist Java Snake game that devours time.",
+      description:
+        "a classic snake game recreation in Java, complete with increasing difficulty and keyboard controls.",
       tools: "Java",
       download: "/Snake.zip",
     },
     {
       key: "MedAssessmentForm",
       name: "MedAssessmentForm",
-      description: "a static figma mockup re-imagined as a soft whisper.",
+      description:
+        "a Figma-based interactive wireframe of a medical assessment interface, focusing on layout and clarity.",
       tools: "Figma",
       download: "/MedAssessmentForm.fig",
     },
@@ -64,7 +66,7 @@ export default function Projects({ setInputLocked }) {
       key: "MC_TRAILER",
       name: "MC_TRAILER",
       description:
-        "a haunting trailer for a media concept that never truly aired.",
+        "a trailer for a media concept project, edited with layered audio and video to build suspense and tone.",
       tools: "Premiere Pro, Audio Design",
       download: "/MC TRAILER.mp4",
     },
