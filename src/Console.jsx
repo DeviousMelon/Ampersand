@@ -1,23 +1,16 @@
+/* eslint-disable no-undef */
 import { useState } from "react";
 import WhoAmI from "./WhoAmI";
 import Projects from "./Projects";
 
-const COMMANDS = [
-  "run(whoami)",
-  "render(Projects)",
-  "loop(&)",
-  "feed(layers)",
-  "summon(&)",
-  "undo(everything)",
-  "help()",
-];
+const COMMANDS = ["run(whoami)", "render(Projects)", "help()"];
 
 export default function Console() {
-  const [log, setLog] = useState([]);
+  // const [log, setLog] = useState([]);
   const [command, setCommand] = useState("");
   const [currentCommand, setCurrentCommand] = useState("");
   const [isRunning, setIsRunning] = useState(false);
-  const [ampersands, setAmpersands] = useState([]);
+  // const [ampersands, setAmpersands] = useState([]);
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(null);
   const [suggestion, setSuggestion] = useState("");
@@ -33,33 +26,33 @@ export default function Console() {
     setHistoryIndex(null);
     setIsRunning(true);
 
-    if (input === "loop(&)" || input === "summon(&)") {
-      const newAmps = Array.from({ length: 8 }, (_, i) => ({
-        id: i,
-        top: Math.random() * 100 + "vh",
-        left: Math.random() * 100 + "vw",
-        rotation: Math.random() * 360,
-      }));
-      setAmpersands(newAmps);
-      setTimeout(() => setAmpersands([]), 5000);
-    }
-
-    const playSound = (file) => {
-      const audio = new Audio(file);
-      audio.volume = 0.3;
-      audio.play().catch(() => {});
-    };
-
-    playSound(input === "loop(&)" ? "/glitch.mp3" : "/blip.mp3");
-
-    const newEntry = { id: log.length, input };
-
-    const delay = 800 + Math.random() * 1000;
-    setTimeout(() => {
-      setLog((prevLog) => [...prevLog, newEntry]);
-      setIsRunning(false);
-    }, delay);
+    // if (input === "loop(&)" || input === "summon(&)") {
+    //   const newAmps = Array.from({ length: 8 }, (_, i) => ({
+    //     id: i,
+    //     top: Math.random() * 100 + "vh",
+    //     left: Math.random() * 100 + "vw",
+    //     rotation: Math.random() * 360,
+    //   }));
+    //   setAmpersands(newAmps);
+    //   setTimeout(() => setAmpersands([]), 5000);
   };
+
+  // const playSound = (file) => {
+  //   const audio = new Audio(file);
+  //   audio.volume = 0.3;
+  //   audio.play().catch(() => {});
+  // };
+
+  //   playSound(input === "loop(&)" ? "/glitch.mp3" : "/blip.mp3");
+
+  //   const newEntry = { id: log.length, input };
+
+  //   const delay = 800 + Math.random() * 1000;
+  //   setTimeout(() => {
+  //     setLog((prevLog) => [...prevLog, newEntry]);
+  //     setIsRunning(false);
+  //   }, delay);
+  // };
 
   const renderResponse = (input) => {
     switch (input) {
@@ -67,28 +60,28 @@ export default function Console() {
         return <WhoAmI />;
       case "render(Projects)":
         return <Projects setInputLocked={setInputLocked} />;
-      case "loop(&)":
-        return (
-          <p className="glitch">
-            // recursive overflow detected. cancel? too late.
-          </p>
-        );
-      case "feed(layers)":
-        return (
-          <p className="lore">// you fed the layers to &. they won’t forget.</p>
-        );
-      case "summon(&)":
-        return (
-          <p className="lore">
-            // & appears briefly in the corner of your eye…
-          </p>
-        );
-      case "undo(everything)":
-        return (
-          <p className="command-error">
-            // nothing can be undone. not anymore.
-          </p>
-        );
+      // case "loop(&)":
+      //   return (
+      //     <p className="glitch">
+      //       // recursive overflow detected. cancel? too late.
+      //     </p>
+      //   );
+      // case "feed(layers)":
+      //   return (
+      //     <p className="lore">// you fed the layers to &. they won’t forget.</p>
+      //   );
+      // case "summon(&)":
+      //   return (
+      //     <p className="lore">
+      //       // & appears briefly in the corner of your eye…
+      //     </p>
+      //   );
+      // case "undo(everything)":
+      //   return (
+      //     <p className="command-error">
+      //       // nothing can be undone. not anymore.
+      //     </p>
+      //   );
       case "help()":
         return (
           <ul>

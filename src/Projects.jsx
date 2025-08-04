@@ -43,7 +43,7 @@ export default function Projects({ setInputLocked }) {
       name: "OOP_Project",
       description:
         "a structured Java application using interfaces and inheritance to demonstrate object-oriented programming concepts.",
-      tools: "Java, Interfaces",
+      tools: "Java, IntelliJ",
       download: "/OOP_Project.zip",
     },
     {
@@ -51,7 +51,7 @@ export default function Projects({ setInputLocked }) {
       name: "Snake",
       description:
         "a classic snake game recreation in Java, complete with increasing difficulty and keyboard controls.",
-      tools: "Java",
+      tools: "Java, BlueJay, IntelliJ",
       download: "/Snake.zip",
     },
     {
@@ -67,7 +67,7 @@ export default function Projects({ setInputLocked }) {
       name: "MC_TRAILER",
       description:
         "a trailer for a media concept project, edited with layered audio and video to build suspense and tone.",
-      tools: "Premiere Pro, Audio Design",
+      tools: "After Effects, Minecraft Flashback",
       download: "/MC TRAILER.mp4",
     },
   ];
