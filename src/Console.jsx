@@ -1,4 +1,5 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+
 import { useState } from "react";
 import WhoAmI from "./WhoAmI";
 import Projects from "./Projects";
@@ -6,11 +7,12 @@ import Projects from "./Projects";
 const COMMANDS = ["run(whoami)", "render(Projects)", "help()"];
 
 export default function Console() {
-  // const [log, setLog] = useState([]);
+  const [log, setLog] = useState([]);
   const [command, setCommand] = useState("");
   const [currentCommand, setCurrentCommand] = useState("");
   const [isRunning, setIsRunning] = useState(false);
-  // const [ampersands, setAmpersands] = useState([]);
+
+  const [ampersands, setAmpersands] = useState([]);
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(null);
   const [suggestion, setSuggestion] = useState("");
