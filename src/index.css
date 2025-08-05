@@ -249,3 +249,99 @@ ul {
   80% { transform: translate(1px, -2px); }
   100% { transform: translate(0, 0); }
 }
+
+/* Root console layout */
+.console {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  /* full viewport */
+  margin: 0;
+  background: #000;
+  color: #0ff;
+  font-family: monospace;
+}
+
+/* Scrollable log area */
+.console-log {
+  flex: 1;
+  /* take all available space above input */
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Input pinned at bottom */
+.console-input {
+  flex: 0;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: #111;
+  border-top: 1px solid #0ff;
+}
+
+.console-input input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #0ff;
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+/* Suggestion dropdown */
+.suggestion {
+  margin-left: 0.5rem;
+  opacity: 0.6;
+  font-size: 0.9rem;
+}
+
+/* Loading dots */
+.loading-dots {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* Glitch-out animation */
+@keyframes glitchOut {
+  0% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  20% {
+    opacity: 0.8;
+    transform: skewX(5deg);
+    filter: hue-rotate(20deg) contrast(200%);
+  }
+
+  40% {
+    opacity: 0.6;
+    transform: translateX(-3px) skewX(-5deg);
+    filter: hue-rotate(-20deg) contrast(150%);
+  }
+
+  60% {
+    opacity: 0.4;
+    transform: translateX(4px) skewX(3deg);
+    filter: hue-rotate(10deg) brightness(0.8);
+  }
+
+  80% {
+    opacity: 0.2;
+    transform: translateX(-2px) skewX(-2deg);
+    filter: hue-rotate(-10deg) brightness(0.5);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.95);
+    filter: none;
+  }
+}
+
+.glitch-out {
+  animation: glitchOut 0.4s ease-in forwards;
+}

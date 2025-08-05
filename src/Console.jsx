@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import WhoAmI from "./WhoAmI";
 import Projects from "./Projects";
 import Contact from "./Contact";
 import Info from "./Info";
+import "./Console.css";
 
 const COMMANDS = [
   "run(whoami)",
@@ -18,14 +19,16 @@ export default function Console() {
   const [command, setCommand] = useState("");
   const [currentCommand, setCurrentCommand] = useState("");
   const [isRunning, setIsRunning] = useState(false);
-  const inputRef = useRef(null);
-  const [ampersands, setAmpersands] = useState([]);
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(null);
   const [suggestion, setSuggestion] = useState("");
   const [inputLocked, setInputLocked] = useState(false);
   const [glitchOut, setGlitchOut] = useState(false);
 
+  const inputRef = useRef(null);
+  const logRef = useRef(null);
+
+  // Escape: unlock, glitch-out, clear log, refocus, auto-scroll
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
@@ -34,12 +37,11 @@ export default function Console() {
         setTimeout(() => {
           setLog([]);
           setGlitchOut(false);
+          if (logRef.current) {
+            logRef.current.scrollTop = logRef.current.scrollHeight;
+          }
           inputRef.current?.focus();
         }, 400);
-        setLog([]);
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
       }
     };
     window.addEventListener("keydown", handleEsc);
@@ -56,37 +58,16 @@ export default function Console() {
     setHistoryIndex(null);
     setIsRunning(true);
 
-    // if (input === "loop(&)" || input === "summon(&)") {
-    //   const newAmps = Array.from({ length: 8 }, (_, i) => ({
-    //     id: i,
-    //     top: Math.random() * 100 + "vh",
-    //     left: Math.random() * 100 + "vw",
-    //     rotation: Math.random() * 360,
-    //   }));
-    //setAmpersands(newAmps);
     const newEntry = { id: log.length, input };
     setTimeout(() => {
       setLog((prevLog) => [...prevLog, newEntry]);
       setIsRunning(false);
+      // scroll new entry into view
+      if (logRef.current) {
+        logRef.current.scrollTop = logRef.current.scrollHeight;
+      }
     }, 500);
   };
-
-  // const playSound = (file) => {
-  //   const audio = new Audio(file);
-  //   audio.volume = 0.3;
-  //   audio.play().catch(() => {});
-  // };
-
-  //   playSound(input === "loop(&)" ? "/glitch.mp3" : "/blip.mp3");
-
-  //   const newEntry = { id: log.length, input };
-
-  //   const delay = 800 + Math.random() * 1000;
-  //   setTimeout(() => {
-  //     setLog((prevLog) => [...prevLog, newEntry]);
-  //     setIsRunning(false);
-  //   }, delay);
-  // };
 
   const renderResponse = (input) => {
     switch (input) {
@@ -98,28 +79,6 @@ export default function Console() {
         return <Contact setInputLocked={setInputLocked} />;
       case "info()":
         return <Info setInputLocked={setInputLocked} />;
-      // case "loop(&)":
-      //   return (
-      //     <p className="glitch">
-      //       // recursive overflow detected. cancel? too late.
-      //     </p>
-      //   );
-      // case "feed(layers)":
-      //   return (
-      //     <p className="lore">// you fed the layers to &. they won’t forget.</p>
-      //   );
-      // case "summon(&)":
-      //   return (
-      //     <p className="lore">
-      //       // & appears briefly in the corner of your eye…
-      //     </p>
-      //   );
-      // case "undo(everything)":
-      //   return (
-      //     <p className="command-error">
-      //       // nothing can be undone. not anymore.
-      //     </p>
-      //   );
       case "help()":
         return (
           <ul>
@@ -135,28 +94,20 @@ export default function Console() {
 
   return (
     <div className="console">
-      <h1 className="title">if(&)</h1>
-
-      <div className="console-log">
+      <div
+        className={`console-log${glitchOut ? " glitch-out" : ""}`}
+        ref={logRef}
+      >
         {log.map((entry) => (
           <div key={entry.id}>
             <p className="input-line">&gt; {entry.input}</p>
             <div className="response">{renderResponse(entry.input)}</div>
           </div>
         ))}
-        {isRunning && (
-          <>
-            {currentCommand === "loop(&)" ? (
-              <p className="glitch-loader">executing loop(&)...</p>
-            ) : (
-              <p className="loading-dots">running</p>
-            )}
-          </>
-        )}
+        {isRunning && <p className="loading-dots">running</p>}
       </div>
 
       <div className="console-input">
-        <div className={`console-log${glitchOut ? " glitch-out" : ""}`}></div>
         <span>&gt; </span>
         <input
           ref={inputRef}
@@ -174,6 +125,7 @@ export default function Console() {
               handleCommand();
             } else if (!inputLocked && e.key === "ArrowUp") {
               e.preventDefault();
+              if (history.length === 0) return;
               const newIndex =
                 historyIndex === null
                   ? history.length - 1
@@ -182,6 +134,7 @@ export default function Console() {
               setCommand(history[newIndex]);
             } else if (!inputLocked && e.key === "ArrowDown") {
               e.preventDefault();
+              if (history.length === 0) return;
               const newIndex =
                 historyIndex === null
                   ? null
@@ -203,25 +156,6 @@ export default function Console() {
         />
         {suggestion && <div className="suggestion">↪ {suggestion}</div>}
       </div>
-
-      {ampersands.map((amp) => (
-        <div
-          key={amp.id}
-          style={{
-            position: "absolute",
-            top: amp.top,
-            left: amp.left,
-            transform: `rotate(${amp.rotation}deg)`,
-            fontSize: "2rem",
-            opacity: 0.2,
-            color: "#0ff",
-            pointerEvents: "none",
-            animation: "floatAmp 5s ease-in-out infinite alternate",
-          }}
-        >
-          &
-        </div>
-      ))}
     </div>
   );
 }
