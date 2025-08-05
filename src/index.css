@@ -450,3 +450,68 @@ ul {
 .glitch-out {
   animation: glitchOut 0.4s ease-in forwards;
 }
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .console {
+    width: 100%;
+    /* fill full width */
+    padding: 0;
+    /* remove side padding */
+  }
+
+  .title {
+    font-size: 1.8rem;
+    /* smaller title */
+    margin: 0.5rem 0;
+  }
+
+  .console-log {
+    padding: 0.5rem;
+  }
+
+  .input-line,
+  .response,
+  .loading-dots {
+    font-size: 0.9rem;
+    /* slightly smaller text */
+  }
+
+  .console-input {
+    padding: 0.5rem;
+  }
+
+  .console-input input {
+    font-size: 1rem;
+    /* keep input legible */
+  }
+
+  .suggestion {
+    font-size: 0.8rem;
+    /* shrink autocomplete hint */
+  }
+}
+
+.hist-btn {
+  background: none;
+  border: 1px solid #0ff;
+  color: #0ff;
+  font-size: 0.8rem;
+  margin: 0 0.25rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  line-height: 1;
+  border-radius: 3px;
+}
+
+.hist-btn:active {
+  background: #0ff;
+  color: #000;
+}
+
+/* Hide them on desktop if you like */
+@media (min-width: 601px) {
+  .hist-btn {
+    display: none;
+  }
+}

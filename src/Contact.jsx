@@ -13,6 +13,8 @@ export default function Contact({ setInputLocked }) {
       <h2>Contact Me</h2>
       <p>
         📧 <a href="mailto:lolwright02@gmail.com">lolwright02@gmail.com</a>
+      </p>
+      <p>
         <a href="mailto:k00300249@student.tus.ie">k00300249@student.tus.ie</a>
       </p>
       <p>

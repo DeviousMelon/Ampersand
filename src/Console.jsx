@@ -3,7 +3,7 @@ import WhoAmI from "./WhoAmI";
 import Projects from "./Projects";
 import Contact from "./Contact";
 import Info from "./Info";
-import "./index.css";
+import "./index.css"; // your main CSS
 
 const COMMANDS = [
   "run(whoami)",
@@ -26,47 +26,48 @@ export default function Console() {
   const inputRef = useRef(null);
   const logRef = useRef(null);
 
-  // HANDLE ESCAPE: unlock, glitch-out, clear log, refocus, auto-scroll
   useEffect(() => {
-    const handleEsc = (e) => {
+    const onEsc = (e) => {
       if (e.key === "Escape") {
         setInputLocked(false);
         setGlitchOut(true);
         setTimeout(() => {
           setLog([]);
           setGlitchOut(false);
-          if (logRef.current) {
-            logRef.current.scrollTop = logRef.current.scrollHeight;
-          }
+          logRef.current?.scrollTo(0, logRef.current.scrollHeight);
           inputRef.current?.focus();
         }, 400);
       }
+      const inp = inputRef.current;
+      if (!inp) return;
+      const handleFocus = () => {
+        setTimeout(() => {
+          inp.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 100);
+      };
+      inp.addEventListener("focus", handleFocus);
+      return () => inp.removeEventListener("focus", handleFocus);
     };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
+
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
   }, []);
 
-  function handleCommand() {
+  const handleCommand = () => {
     const input = command.trim();
     if (!input) return;
-
     setCommand("");
     setHistory((h) => [...h, input]);
     setHistoryIndex(null);
     setIsRunning(true);
-
-    // add entry after brief delay
     setTimeout(() => {
       setLog((l) => [...l, { id: l.length, input }]);
       setIsRunning(false);
-      // scroll new entry into view
-      if (logRef.current) {
-        logRef.current.scrollTop = logRef.current.scrollHeight;
-      }
+      logRef.current?.scrollTo(0, logRef.current.scrollHeight);
     }, 500);
-  }
+  };
 
-  function renderResponse(input) {
+  const renderResponse = (input) => {
     switch (input) {
       case "run(whoami)":
         return <WhoAmI />;
@@ -79,22 +80,40 @@ export default function Console() {
       case "help()":
         return (
           <ul>
-            {COMMANDS.map((cmd) => (
-              <li key={cmd}>{cmd}</li>
+            {COMMANDS.map((c) => (
+              <li key={c}>{c}</li>
             ))}
           </ul>
         );
       default:
         return <p>// unknown command: {input}</p>;
     }
-  }
+  };
+
+  const prevHistory = () => {
+    if (!history.length) return;
+    const idx =
+      historyIndex === null
+        ? history.length - 1
+        : Math.max(0, historyIndex - 1);
+    setHistoryIndex(idx);
+    setCommand(history[idx]);
+  };
+  const nextHistory = () => {
+    if (!history.length) return;
+    const idx =
+      historyIndex === null
+        ? null
+        : historyIndex + 1 >= history.length
+        ? null
+        : historyIndex + 1;
+    setHistoryIndex(idx);
+    setCommand(idx === null ? "" : history[idx]);
+  };
 
   return (
     <div className="console">
-      {/* TITLE */}
       <h1 className="title">if(&)</h1>
-
-      {/* LOG */}
       <div
         ref={logRef}
         className={`console-log${glitchOut ? " glitch-out" : ""}`}
@@ -108,9 +127,14 @@ export default function Console() {
         {isRunning && <p className="loading-dots">running</p>}
       </div>
 
-      {/* INPUT */}
       <div className="console-input">
-        <span>&gt; </span>
+        <span>&gt;</span>
+        <button className="hist-btn" onClick={prevHistory}>
+          ▲
+        </button>
+        <button className="hist-btn" onClick={nextHistory}>
+          ▼
+        </button>
         <input
           ref={inputRef}
           type="text"
@@ -127,24 +151,10 @@ export default function Console() {
               handleCommand();
             } else if (!inputLocked && e.key === "ArrowUp") {
               e.preventDefault();
-              if (!history.length) return;
-              const idx =
-                historyIndex === null
-                  ? history.length - 1
-                  : Math.max(0, historyIndex - 1);
-              setHistoryIndex(idx);
-              setCommand(history[idx]);
+              prevHistory();
             } else if (!inputLocked && e.key === "ArrowDown") {
               e.preventDefault();
-              if (!history.length) return;
-              const idx =
-                historyIndex === null
-                  ? null
-                  : historyIndex + 1 >= history.length
-                  ? null
-                  : historyIndex + 1;
-              setHistoryIndex(idx);
-              setCommand(idx === null ? "" : history[idx]);
+              nextHistory();
             } else if (e.key === "Tab") {
               e.preventDefault();
               if (suggestion) {
