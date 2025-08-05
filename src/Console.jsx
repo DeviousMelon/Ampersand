@@ -4,7 +4,7 @@ import WhoAmI from "./WhoAmI";
 import Projects from "./Projects";
 import Contact from "./Contact";
 import Info from "./Info";
-import "./Console.css";
+import "./index.css";
 
 const COMMANDS = [
   "run(whoami)",
