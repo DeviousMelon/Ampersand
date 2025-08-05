@@ -1,0 +1,57 @@
+.contact-page {
+    padding: 2rem;
+    background: #111;
+    color: #0ff;
+    font-family: monospace;
+}
+
+.contact-page h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.contact-page p {
+    margin: 0.5rem 0;
+}
+
+.contact-page a {
+    color: #0ff;
+    text-decoration: underline;
+}
+
+.contact-form {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-form label {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95rem;
+}
+
+.contact-form input,
+.contact-form textarea {
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    background: #222;
+    border: 1px solid #0ff;
+    color: #0ff;
+    font-family: inherit;
+}
+
+.contact-form button {
+    align-self: flex-start;
+    padding: 0.5rem 1rem;
+    background: none;
+    border: 1px solid #0ff;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.contact-form button:hover {
+    background: #0ff;
+    color: #000;
+}

@@ -6,12 +6,6 @@ export default function App() {
   const [entered, setEntered] = useState(false);
 
   return (
-    <>
-      {!entered ? (
-        <Landing onEnter={() => setEntered(true)} />
-      ) : (
-        <Console />
-      )}
-    </>
+    <>{!entered ? <Landing onEnter={() => setEntered(true)} /> : <Console />}</>
   );
 }

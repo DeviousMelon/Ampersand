@@ -1,10 +1,18 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-
 import { useState } from "react";
 import WhoAmI from "./WhoAmI";
 import Projects from "./Projects";
+import Contact from "./Contact";
+import Info from "./Info";
 
-const COMMANDS = ["run(whoami)", "render(Projects)", "help()"];
+const COMMANDS = [
+  "run(whoami)",
+  "render(Projects)",
+  "contact()",
+  "info()",
+  "help()",
+];
 
 export default function Console() {
   const [log, setLog] = useState([]);
@@ -17,6 +25,16 @@ export default function Console() {
   const [historyIndex, setHistoryIndex] = useState(null);
   const [suggestion, setSuggestion] = useState("");
   const [inputLocked, setInputLocked] = useState(false);
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        setInputLocked(false);
+      }
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
 
   const handleCommand = () => {
     const input = command.trim();
@@ -66,6 +84,10 @@ export default function Console() {
         return <WhoAmI />;
       case "render(Projects)":
         return <Projects setInputLocked={setInputLocked} />;
+      case "contact()":
+        return <Contact setInputLocked={setInputLocked} />;
+      case "info()":
+        return <Info setInputLocked={setInputLocked} />;
       // case "loop(&)":
       //   return (
       //     <p className="glitch">
