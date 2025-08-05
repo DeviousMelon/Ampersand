@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import WhoAmI from "./WhoAmI";
 import Projects from "./Projects";
 import Contact from "./Contact";
@@ -18,17 +18,28 @@ export default function Console() {
   const [command, setCommand] = useState("");
   const [currentCommand, setCurrentCommand] = useState("");
   const [isRunning, setIsRunning] = useState(false);
-
+  const inputRef = useRef(null);
   const [ampersands, setAmpersands] = useState([]);
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(null);
   const [suggestion, setSuggestion] = useState("");
   const [inputLocked, setInputLocked] = useState(false);
+  const [glitchOut, setGlitchOut] = useState(false);
 
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
         setInputLocked(false);
+        setGlitchOut(true);
+        setTimeout(() => {
+          setLog([]);
+          setGlitchOut(false);
+          inputRef.current?.focus();
+        }, 400);
+        setLog([]);
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
       }
     };
     window.addEventListener("keydown", handleEsc);
@@ -145,8 +156,10 @@ export default function Console() {
       </div>
 
       <div className="console-input">
+        <div className={`console-log${glitchOut ? " glitch-out" : ""}`}></div>
         <span>&gt; </span>
         <input
+          ref={inputRef}
           type="text"
           value={command}
           onChange={(e) => {
