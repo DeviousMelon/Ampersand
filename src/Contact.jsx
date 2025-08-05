@@ -13,8 +13,8 @@ export default function Contact({ setInputLocked }) {
       <h2>Contact Me</h2>
       <p>
         📧 <a href="mailto:lolwright02@gmail.com">lolwright02@gmail.com</a>
+        <a href="mailto:k00300249@student.tus.ie">k00300249@student.tus.ie</a>
       </p>
-      <p>📞 086 848 5491</p>
       <p>
         🔗{" "}
         <a
@@ -29,7 +29,7 @@ export default function Contact({ setInputLocked }) {
       {/* Simple Formspree form—you can swap in your own endpoint */}
       <form
         className="contact-form"
-        action="https://formspree.io/f/YOUR_FORM_ID"
+        action="https://formspree.io/f/mvgqwqan"
         method="POST"
       >
         <label>
