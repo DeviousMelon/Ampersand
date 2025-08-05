@@ -1,6 +1,5 @@
-/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WhoAmI from "./WhoAmI";
 import Projects from "./Projects";
 import Contact from "./Contact";
