@@ -1,0 +1,270 @@
+:root {
+    --bg: #000;
+    --panel: #111;
+    --text: #f5f5f5;
+    --muted: #aaa;
+    --yellow: #FFE600;
+    --yellow-2: #FFEE55
+}
+
+.nc-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .75rem 1rem;
+    background: linear-gradient(180deg, rgba(255, 230, 0, 0.06), transparent);
+    border-bottom: 1px solid rgba(255, 230, 0, 0.18);
+    backdrop-filter: blur(6px);
+}
+
+.nc-brand {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    color: var(--text)
+}
+
+.nc-logo {
+    font-size: 1.6rem;
+    color: var(--yellow)
+}
+
+.nc-title {
+    font-weight: 700;
+    letter-spacing: .02em
+}
+
+.nc-quick {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap
+}
+
+.nc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    padding: .55rem .9rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 230, 0, .35);
+    background: linear-gradient(180deg, rgba(255, 230, 0, .08), rgba(255, 230, 0, .02));
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+.nc-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--yellow)
+}
+
+.nc-btn.primary {
+    background: var(--yellow);
+    color: #111;
+    border-color: var(--yellow)
+}
+
+.nc-btn.ghost {
+    background: transparent
+}
+
+.nc-btn:focus-visible {
+    outline: 2px solid var(--yellow);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px rgba(255, 230, 0, .25)
+}
+
+.nc-actions {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin: .75rem 0
+}
+
+.nc-chip {
+    padding: .45rem .8rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 230, 0, .35);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.nc-chip:hover {
+    border-color: var(--yellow)
+}
+
+.nc-chip:focus-visible {
+    outline: 2px solid var(--yellow);
+    outline-offset: 2px
+}
+
+.nc-tip {
+    position: relative;
+    display: inline-block
+}
+
+.nc-tip .nc-tiptext {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    color: var(--text);
+    padding: .45rem .6rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 230, 0, .25);
+    white-space: nowrap;
+    font-size: .9rem;
+    display: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+}
+
+.nc-tip:hover .nc-tiptext {
+    display: block
+}
+
+.nc-help-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .6);
+    display: grid;
+    place-items: center;
+}
+
+.nc-help {
+    width: min(680px, 92vw);
+    background: var(--panel);
+    border: 1px solid rgba(255, 230, 0, .3);
+    border-radius: 16px;
+    padding: 1rem 1.2rem;
+    color: var(--text);
+}
+
+.nc-help h2 {
+    margin: 0 0 .5rem 0;
+    color: var(--yellow)
+}
+
+.nc-help-list {
+    margin: .5rem 0 1rem 1rem
+}
+
+.nc-help-list li {
+    margin: .25rem 0
+}
+
+.nc-help-actions {
+    display: flex;
+    justify-content: flex-end
+}
+
+.nc-help kbd {
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 230, 0, .25);
+    border-bottom-width: 3px;
+    padding: .1rem .3rem;
+    border-radius: 6px
+}
+
+.nc-mobilenav {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 48px;
+    gap: .5rem;
+    padding: .5rem;
+    background: linear-gradient(0deg, rgba(0, 0, 0, .85), rgba(0, 0, 0, .6));
+    border-top: 1px solid rgba(255, 230, 0, .25);
+}
+
+@media (min-width: 601px) {
+    .nc-mobilenav {
+        display: none
+    }
+}
+
+.nc-mbtn {
+    padding: .65rem .75rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 230, 0, .3);
+    background: #0f0f0f;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.nc-mbtn.primary {
+    background: var(--yellow);
+    color: #111;
+    border-color: var(--yellow)
+}
+
+.nc-mbtn.ghost {
+    background: transparent
+}
+
+.nc-mbtn:focus-visible {
+    outline: 2px solid var(--yellow);
+    outline-offset: 2px
+}
+
+.nc-toggle {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: .5rem
+}
+
+.nc-toggle-label {
+    color: var(--yellow);
+    font-weight: 600;
+    user-select: none
+}
+
+.nc-switch {
+    position: relative;
+    width: 52px;
+    height: 30px;
+    border: 1px solid var(--yellow);
+    border-radius: 999px;
+    background: var(--panel);
+    cursor: pointer;
+    padding: 0
+}
+
+.nc-switch .nc-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--yellow);
+    transition: transform .18s ease, background .18s ease
+}
+
+.nc-switch.checked {
+    background: linear-gradient(180deg, rgba(255, 230, 0, .2), rgba(255, 230, 0, .05))
+}
+
+.nc-switch.checked .nc-knob {
+    transform: translateX(22px);
+    background: #111
+}
+
+@media (max-width:600px) {
+    .nc-toggle {
+        top: 10px;
+        right: 10px
+    }
+}
