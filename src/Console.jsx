@@ -3,7 +3,7 @@ import TopBar from "./ui/TopBar";
 import CommandButtons from "./ui/CommandButtons";
 import HelpOverlay from "./ui/HelpOverlay";
 import MobileNav from "./ui/MobileNav";
-import ToggleSwitch from "./ui/ToggleSwitch";
+import ToggleSwitch from "./ui/ToggleSwitch.jsx";
 import "./friendly.css";
 
 export default function Console() {
