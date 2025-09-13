@@ -11,9 +11,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -22,6 +24,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -39,4 +42,217 @@
 
 .read-the-docs {
   color: #888;
+}
+
+:root {
+  --bg: #0a0a0a;
+  --bg-2: #111111;
+  --panel: #0f0f0f;
+  --text: #f5f5f5;
+  --muted: #bdbdbd;
+  --yellow: #FFE600;
+  --yellow-2: #FFEE55;
+  --yellow-3: #FFFA9E;
+  --outline: rgba(255, 230, 0, 0.35);
+  --link: #fff889;
+  --danger: #ff4242;
+  --success: #72ff72;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #fafafa;
+    --bg-2: #ffffff;
+    --panel: #ffffff;
+    --text: #111111;
+    --muted: #444;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+}
+
+* {
+  box-sizing: border-box
+}
+
+html,
+body,
+#root {
+  height: 100%
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(1200px 600px at 20% -10%, rgba(255, 230, 0, 0.12), transparent),
+    radial-gradient(1000px 800px at 120% 110%, rgba(255, 230, 0, 0.08), transparent),
+    var(--bg);
+  color: var(--text);
+  font-family: ui-monospace, Consolas, monospace;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--link);
+}
+
+a:hover {
+  color: var(--yellow)
+}
+
+::selection {
+  background: var(--yellow);
+  color: #111
+}
+
+@keyframes glitchShift {
+  0% {
+    transform: translate(0)
+  }
+
+  20% {
+    transform: translate(-0.5px, 0.5px)
+  }
+
+  40% {
+    transform: translate(0.5px, -0.25px)
+  }
+
+  60% {
+    transform: translate(-0.25px, 0.25px)
+  }
+
+  80% {
+    transform: translate(0.25px, -0.5px)
+  }
+
+  100% {
+    transform: translate(0)
+  }
+}
+
+.glitch {
+  animation: glitchShift 1.2s steps(2, jump-none) infinite;
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem
+}
+
+.app-shell {
+  background: linear-gradient(180deg, rgba(255, 230, 0, 0.05), rgba(255, 230, 0, 0)), var(--panel);
+  border: 1px solid rgba(255, 230, 0, 0.15);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+}
+
+header.site-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1rem
+}
+
+.logo {
+  height: 48px;
+  filter: drop-shadow(0 6px 20px rgba(255, 230, 0, 0.15))
+}
+
+.logo:hover {
+  transform: scale(1.04) rotate(-1deg)
+}
+
+.title {
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+}
+
+.badge {
+  padding: .25rem .5rem;
+  border: 1px dashed rgba(255, 230, 0, .4);
+  border-radius: 999px;
+  color: var(--yellow)
+}
+
+.console {
+  background: #0b0b0b;
+  border: 1px solid rgba(255, 230, 0, 0.15);
+  border-radius: 14px;
+  overflow: hidden
+}
+
+.console .topbar {
+  display: flex;
+  gap: .5rem;
+  padding: .5rem .75rem;
+  background: rgba(255, 230, 0, 0.08)
+}
+
+.console .lights span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%
+}
+
+.console .lights .red {
+  background: #ff605c
+}
+
+.console .lights .yellow {
+  background: #ffe600
+}
+
+.console .lights .green {
+  background: #00ca4e
+}
+
+.console .screen {
+  padding: 1rem;
+  min-height: 220px;
+}
+
+.console .prompt {
+  color: var(--yellow)
+}
+
+.console .output {
+  color: var(--text)
+}
+
+input.console-input {
+  width: 100%;
+  background: #0e0e0e;
+  border: 1px solid rgba(255, 230, 0, 0.2);
+  color: var(--text);
+  padding: .75rem 1rem;
+  border-radius: 12px;
+}
+
+input.console-input:focus {
+  border-color: var(--yellow)
+}
+
+.btn {
+  display: inline-flex;
+  gap: .5rem;
+  align-items: center;
+  padding: .6rem .9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 230, 0, 0.25);
+  background: linear-gradient(180deg, rgba(255, 230, 0, 0.12), rgba(255, 230, 0, 0.06));
+  color: var(--text);
+  text-decoration: none;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--yellow)
+}
+
+.btn.primary {
+  background: var(--yellow);
+  color: #111
 }

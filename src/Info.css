@@ -34,3 +34,38 @@
     font-style: italic;
     opacity: 0.7;
 }
+
+:root {
+    --yellow: #FFE600;
+    --panel: #111;
+    --text: #f5f5f5
+}
+
+.info-page {
+    padding: 2rem;
+    color: var(--text)
+}
+
+.info-hero {
+    background: var(--panel);
+    border: 1px solid var(--yellow);
+    border-radius: 16px;
+    padding: 1.25rem;
+}
+
+.info-hero h2 {
+    margin-top: 0;
+    color: var(--yellow)
+}
+
+.info-card {
+    background: #0f0f0f;
+    border: 1px solid rgba(255, 230, 0, .2);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.info-card h3 {
+    color: var(--yellow)
+}
