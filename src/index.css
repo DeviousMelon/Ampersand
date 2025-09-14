@@ -1,185 +1,85 @@
-:root {
-  --bg: #000;
-  --panel: #111;
-  --text: #f5f5f5;
-  --muted: #bfbfbf;
-  --yellow: #ffe600;
-  --border: rgba(255, 230, 0, 0.2);
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  color: var(--text);
-}
-
-#root {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
 .console {
   width: 900px;
   max-width: 92vw;
   display: grid;
   gap: 20px;
+  justify-items: center;
 }
 
-.title {
-  margin: 0;
-  font-size: 52px;
-  color: var(--yellow);
-  text-align: center;
-}
-
-.console-log {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 20px;
-  min-height: 240px;
-  max-height: 50vh;
-  overflow: auto;
-}
-
-.input-line {
-  font-family: monospace;
-  color: var(--yellow);
-}
-
-.response {
-  margin: 4px 0 10px;
-}
-
-.console-input {
+.header {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 12px;
+  justify-content: flex-end;
+  width: 100%;
 }
 
-.console-input span {
-  font-family: monospace;
-  color: var(--yellow);
-}
-
-.hist-btn {
-  border: none;
-  background: var(--yellow);
-  color: #000;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.console-input input {
-  flex: 1;
-  background: #000;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  padding: 10px;
-  font-size: 14px;
-}
-
-.enter-btn {
-  margin-top: 18px;
-  padding: 10px 20px;
-  border: 2px solid var(--yellow);
-  background: transparent;
-  color: var(--yellow);
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.enter-btn:hover {
-  background: var(--yellow);
-  color: #000;
-}
-
-.landing {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 60px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--panel);
-}
-
-.landing h1 {
-  font-size: 72px;
-  color: var(--yellow);
-  margin: 0 0 10px;
-}
-
-.landing p {
-  margin: 0;
-  font-size: 16px;
-  color: var(--muted);
-}
-
-.top-bar {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--text);
-}
-
-.toggle input {
-  appearance: none;
+.switch {
+  position: relative;
+  display: inline-block;
   width: 44px;
   height: 24px;
-  border-radius: 12px;
-  background: #333;
-  position: relative;
-  cursor: pointer;
-  border: 1px solid var(--border);
 }
 
-.toggle input:checked {
-  background: var(--yellow);
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
-.toggle input::before {
-  content: "";
+.slider {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform .2s ease;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  transition: .3s;
+  border-radius: 24px;
 }
 
-.toggle input:checked::before {
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .3s;
+}
+
+.switch input:checked+.slider {
+  background-color: var(--yellow);
+}
+
+.switch input:checked+.slider:before {
   transform: translateX(20px);
+}
+
+.mode-label {
+  margin-left: 10px;
+  color: var(--yellow);
+  font-weight: 600;
+}
+
+.command-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.command-bar button {
+  border: 1px solid var(--border);
+  background: var(--yellow);
+  color: #000;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+.command-bar button:hover {
+  background: #fff45c;
 }

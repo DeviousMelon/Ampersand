@@ -4,7 +4,6 @@ import Projects from "./Projects";
 import Contact from "./Contact";
 import Info from "./Info";
 import CommandButtons from "./ui/CommandButtons";
-import ToggleSwitch from "./ui/ToggleSwitch.jsx";
 import "./index.css";
 
 const COMMANDS = ["run(whoami)", "render(Projects)", "contact()", "info()", "help()"];
@@ -132,12 +131,27 @@ export default function Console() {
 
   return (
     <div className="console">
-      <div className="top-bar">
-        <ToggleSwitch checked={guided} onChange={setGuided} label="Guided" />
+      <div className="header">
+        <div className="toggle">
+          <label className="switch">
+            <input
+              type="checkbox"
+              checked={guided}
+              onChange={() => setGuided(!guided)}
+            />
+            <span className="slider"></span>
+          </label>
+          <span className="mode-label">{guided ? "Guided" : "Console"}</span>
+        </div>
       </div>
+
       <h1 className="title">if(&)</h1>
 
-      {guided && <CommandButtons onRun={(c) => execute(normalizeCmd(c))} />}
+      {guided && (
+        <div className="command-bar">
+          <CommandButtons onRun={(c) => execute(normalizeCmd(c))} />
+        </div>
+      )}
 
       <div ref={logRef} className={`console-log${glitchOut ? " glitch-out" : ""}`}>
         {log.map(({ id, input }) => (
