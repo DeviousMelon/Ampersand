@@ -17,261 +17,99 @@ body {
 }
 
 body {
+  display: grid;
+  place-items: center;
   margin: 0;
   background: var(--bg);
-  color: var(--text);
-  font-family: monospace;
-  padding: 2rem;
+  height: 100%
 }
 
-::selection {
-  background: var(--yellow);
-  color: #000
-}
-
-@keyframes glitchy {
-  from {
-    transform: translateX(-0.5px);
-  }
-
-  to {
-    transform: translateX(0.5px);
-  }
-}
-
-@keyframes dots {
-  0% {
-    content: ''
-  }
-
-  25% {
-    content: '.'
-  }
-
-  50% {
-    content: '..'
-  }
-
-  75% {
-    content: '...'
-  }
-
-  100% {
-    content: ''
-  }
-}
-
-@keyframes glitchTitle {
-  0% {
-    transform: translate(0, 0)
-  }
-
-  20% {
-    transform: translate(-2px, 1px)
-  }
-
-  40% {
-    transform: translate(2px, -1px)
-  }
-
-  60% {
-    transform: translate(-1px, 2px)
-  }
-
-  80% {
-    transform: translate(1px, -2px)
-  }
-
-  100% {
-    transform: translate(0, 0)
-  }
-}
-
-@keyframes glitchOut {
-  0% {
-    opacity: 1;
-    transform: none;
-    filter: none
-  }
-
-  20% {
-    opacity: .8;
-    transform: skewX(5deg);
-    filter: hue-rotate(20deg) contrast(200%)
-  }
-
-  40% {
-    opacity: .6;
-    transform: translateX(-3px) skewX(-5deg);
-    filter: hue-rotate(-20deg) contrast(150%)
-  }
-
-  60% {
-    opacity: .4;
-    transform: translateX(4px) skewX(3deg);
-    filter: hue-rotate(10deg) brightness(.8)
-  }
-
-  80% {
-    opacity: .2;
-    transform: translateX(-2px) skewX(-2deg);
-    filter: hue-rotate(-10deg) brightness(.5)
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(.95);
-    filter: none
-  }
-}
-
-.title {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: var(--yellow);
+#root {
+  min-height: 100%;
+  width: 100%
 }
 
 .console {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   max-width: 800px;
   margin: 0 auto;
   background: var(--bg);
   color: var(--yellow);
   font-family: monospace;
+  min-height: 70vh;
+  padding: 8px;
   overflow: hidden;
 }
 
 .console-log {
   flex: 1;
-  min-height: 40vh;
-  max-height: 60vh;
-  overflow-y: auto;
+  overflow: auto;
   padding: 1rem;
-  margin-bottom: 2rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--yellow) #000;
+  border: 1px solid rgba(255, 230, 0, 0.15);
+  border-radius: 12px;
+  background: #0b0b0b;
 }
 
-.input-line {
-  color: var(--yellow);
-  font-weight: bold;
-  margin-top: 1rem;
-}
-
-.response {
-  margin-left: 1rem;
-  opacity: .9;
-}
-
-.command-error {
-  color: red;
+.console-input-row {
+  display: flex;
+  gap: .5rem;
+  margin: .75rem 0 0 0;
+  align-items: center
 }
 
 .console-input {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: var(--panel);
-  border-top: 1px solid var(--yellow);
+  flex: 1;
+  padding: .75rem .9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 230, 0, .35);
+  background: linear-gradient(180deg, rgba(255, 230, 0, .05), rgba(255, 230, 0, .02));
+  outline: none;
+  color: var(--text)
 }
 
-.console-input input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text);
-  font-size: 1rem;
-  font-family: inherit;
-  width: 90%;
+.console-input:focus {
+  border-color: var(--yellow)
 }
 
 .hist-btn {
-  background: none;
-  border: 1px solid var(--yellow);
+  padding: .6rem .8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 230, 0, .35);
+  background: linear-gradient(180deg, rgba(255, 230, 0, .08), rgba(255, 230, 0, .03));
   color: var(--yellow);
-  font-size: 0.8rem;
-  margin: 0 0.25rem;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-  line-height: 1;
-  border-radius: 3px;
+  cursor: pointer
 }
 
-.hist-btn:active {
-  background: var(--yellow);
-  color: #000;
+.input-line {
+  color: var(--yellow-2);
+  margin: .25rem 0
 }
 
-@media (min-width: 601px) {
-  .hist-btn {
-    display: none;
-  }
+.response {
+  color: var(--text);
+  margin: .25rem 0
 }
 
-.landing-screen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background: var(--bg);
-  color: var(--yellow);
-  text-align: center;
+.landing {
+  display: grid;
+  gap: .4rem;
+  padding: 1rem 0
 }
 
-.glitch-title {
-  font-size: 4rem;
-  animation: glitchTitle 1s infinite alternate;
-  color: var(--yellow);
+.title {
+  font-weight: 700;
+  letter-spacing: .01em;
+  font-size: 2rem
 }
 
-.enter-button {
-  margin-top: 2rem;
-  padding: .75rem 1.5rem;
-  font-size: 1.1rem;
-  background: none;
-  border: 2px solid var(--yellow);
-  color: var(--yellow);
-  cursor: pointer;
-  transition: .2s;
+.subtitle {
+  color: var(--muted)
 }
 
-.enter-button:hover {
-  background: var(--yellow);
-  color: #000
-}
-
-.glitch {
-  color: var(--yellow);
-  text-shadow: 1px 0 var(--yellow), -1px 0 var(--yellow-2);
-  animation: glitchy .3s infinite alternate;
-}
-
-.loading-dots {
-  color: #666;
-  font-style: italic;
-  margin-top: .5rem;
-  letter-spacing: 1px;
-}
-
-.loading-dots::after {
-  content: '';
-  display: inline-block;
-  width: 1ch;
-  text-align: left;
-  animation: dots 1.2s steps(4, end) infinite;
-}
-
-.glitch-out {
-  animation: glitchOut .4s ease-in forwards
-}
-
-@media (max-width: 600px) {
-  body {
-    padding: 1rem;
+@media (max-width: 900px) {
+  .console {
+    max-width: 92vw
   }
 
   .title {

@@ -11,55 +11,124 @@ import Info from "./Info";
 import "./friendly.css";
 
 export default function Console() {
-  const [guided, setGuided] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("guided") ?? "false"); } catch { return false; }
-  });
+  const [guided, setGuided] = useState(false);
   const [showLanding, setShowLanding] = useState(true);
-  const [log, setLog] = useState([]);
   const [command, setCommand] = useState("");
+  const [log, setLog] = useState([]);
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(null);
   const [view, setView] = useState(null);
   const inputRef = useRef(null);
   const logRef = useRef(null);
 
-  useEffect(() => { localStorage.setItem("guided", JSON.stringify(guided)); }, [guided]);
-  useEffect(() => { inputRef.current?.focus(); }, []);
-  useEffect(() => { logRef.current?.scrollTo(0, logRef.current.scrollHeight); }, [log]);
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "/") {
+        window.dispatchEvent(new CustomEvent("help:toggle"));
+      }
+      if (e.key === "Escape") {
+        try {
+          const input = document.querySelector('input.console-input');
+          if (input) input.blur();
+        } catch { }
+        setLog([]);
+        setView(null);
+        setCommand("");
+        setShowLanding(true);
+        setGuided(false);
+        try { localStorage.removeItem("guided"); } catch { }
+        return;
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
-  const showView = (name) => {
-    setShowLanding(false);
-    setView(name);
-    setLog((prev) => [...prev, { type: "output", text: `Opened ${name}.` }]);
+  useEffect(() => { inputRef.current?.focus(); }, [view, guided, showLanding]);
+
+  const appendLog = (items) => {
+    setLog((prev) => {
+      const next = Array.isArray(items) ? [...prev, ...items] : [...prev, items];
+      return next;
+    });
   };
 
-  const runCommand = (cmd) => {
-    if (!cmd) return;
-    const trimmed = cmd.trim();
-    setShowLanding(false);
-    setLog((prev) => [...prev, { type: "input", text: trimmed }]);
-    if (trimmed === "help()" || trimmed === "help") {
-      window.dispatchEvent(new CustomEvent("help:toggle"));
-      setLog((prev) => [...prev, { type: "output", text: "Opened help." }]);
-    } else if (trimmed === "run(whoami)") {
-      showView("whoami");
-    } else if (trimmed === "render(Projects)") {
-      showView("projects");
-    } else if (trimmed === "contact()") {
-      showView("contact");
-    } else if (trimmed === "info()") {
-      showView("info");
-    } else {
-      setLog((prev) => [...prev, { type: "error", text: "Unknown command." }]);
-    }
-    setHistory((prev) => [trimmed, ...prev]);
+  const clearAll = () => {
+    setLog([]);
+    setView(null);
+    setCommand("");
+    setShowLanding(true);
+  };
+
+  const runCommand = (raw) => {
+    const value = (raw ?? command).trim();
+    if (!value) return;
+    setHistory((h) => [value, ...h.slice(0, 49)]);
     setHistoryIndex(null);
+    appendLog({ type: "input", text: `> ${value}` });
+    const [cmd, ...rest] = value.split(/\s+/);
+    const arg = rest.join(" ");
+    if (cmd.toLowerCase() === "clear") {
+      clearAll();
+      return;
+    }
+    if (cmd.toLowerCase() === "guided") {
+      if (arg.toLowerCase() === "on") {
+        setGuided(true);
+        try { localStorage.setItem("guided", "true"); } catch { }
+        appendLog({ type: "response", text: "guided on" });
+        return;
+      }
+      if (arg.toLowerCase() === "off") {
+        setGuided(false);
+        try { localStorage.setItem("guided", "false"); } catch { }
+        appendLog({ type: "response", text: "guided off" });
+        return;
+      }
+    }
+    if (["whoami", "who", "me"].includes(cmd.toLowerCase())) {
+      setView("whoami");
+      setShowLanding(false);
+      appendLog({ type: "response", text: "loading whoami" });
+      setCommand("");
+      return;
+    }
+    if (["projects", "proj"].includes(cmd.toLowerCase())) {
+      setView("projects");
+      setShowLanding(false);
+      appendLog({ type: "response", text: "loading projects" });
+      setCommand("");
+      return;
+    }
+    if (["contact", "email"].includes(cmd.toLowerCase())) {
+      setView("contact");
+      setShowLanding(false);
+      appendLog({ type: "response", text: "loading contact" });
+      setCommand("");
+      return;
+    }
+    if (["info", "about", "help"].includes(cmd.toLowerCase())) {
+      setView("info");
+      setShowLanding(false);
+      appendLog({ type: "response", text: "loading info" });
+      setCommand("");
+      return;
+    }
+    if (["next", "prev"].includes(cmd.toLowerCase())) {
+      window.dispatchEvent(new CustomEvent(cmd.toLowerCase() === "next" ? "guided:next" : "guided:prev"));
+      setCommand("");
+      return;
+    }
+    appendLog({ type: "response", text: `unknown command: ${value}` });
     setCommand("");
   };
 
-  const onSubmit = (e) => {
+  const prev = () => window.dispatchEvent(new CustomEvent("guided:prev"));
+  const next = () => window.dispatchEvent(new CustomEvent("guided:next"));
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    runCommand(command);
+    runCommand();
   };
 
   const handleKeyDown = (e) => {
@@ -89,72 +158,58 @@ export default function Console() {
         setHistoryIndex(nextIndex);
         setCommand(history[nextIndex] || "");
       }
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      runCommand();
     }
   };
-
-  const prev = () => window.dispatchEvent(new CustomEvent("nav:prev"));
-  const next = () => window.dispatchEvent(new CustomEvent("nav:next"));
-
-  useEffect(() => {
-    const onKey = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "/") {
-        window.dispatchEvent(new CustomEvent("help:toggle"));
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
 
   return (
     <div className="console">
       <ToggleSwitch checked={guided} onChange={setGuided} />
-      {guided && <TopBar onRun={runCommand} />}
-      {showLanding ? (
-        <div className="landing-screen">
-          <div className="glitch-title">if(&)</div>
-          <button className="enter-button" onClick={() => setShowLanding(false)}>Enter</button>
-        </div>
-      ) : (
+      <TopBar />
+      {!view && (
         <>
-          <h1 className="title">if(&)</h1>
-          {guided && <CommandButtons onRun={runCommand} />}
-          <div className="console-log" ref={logRef}>
-            {log.map((line, i) => (
-              <div
-                key={i}
-                className={
-                  line.type === "input" ? "input-line" :
-                    line.type === "error" ? "command-error" : "response"
-                }
-              >
-                {line.type === "input" ? "> " : ""}
-                {line.text}
+          <div className="console-log" ref={logRef} role="log" aria-live="polite">
+            {showLanding && (
+              <div className="landing">
+                <div className="title">if(&)</div>
+                <div className="subtitle">type a command or use the buttons</div>
               </div>
+            )}
+            {log.map((item, i) => (
+              <div key={i} className={item.type === "input" ? "input-line" : "response"}>{item.text}</div>
             ))}
-            <div className="view-area">
-              {view === "whoami" && <WhoAmI />}
-              {view === "projects" && <Projects />}
-              {view === "contact" && <Contact />}
-              {view === "info" && <Info />}
-            </div>
           </div>
-          <form className="console-input" onSubmit={onSubmit}>
-            <span className="input-line">{">"}</span>
+          <CommandButtons
+            onWhoAmI={() => runCommand("whoami")}
+            onProjects={() => runCommand("projects")}
+            onContact={() => runCommand("contact")}
+            onInfo={() => runCommand("info")}
+            onClear={() => runCommand("clear")}
+          />
+          <form className="console-input-row" onSubmit={handleSubmit}>
             <input
               ref={inputRef}
+              className="console-input"
+              type="text"
               value={command}
               onChange={(e) => setCommand(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Type a command or use the buttons"
               aria-label="Console input"
             />
-            <button className="hist-btn" type="button" onClick={() => history[0] && setCommand(history[0])} aria-label="History up">↑</button>
-            <button className="hist-btn" type="button" onClick={() => history[1] && setCommand(history[1])} aria-label="History down">↓</button>
+            <button className="hist-btn" type="button" onClick={() => history.length > 0 && setCommand(history[0])} aria-label="History up">↑</button>
+            <button className="hist-btn" type="button" onClick={() => history.length > 1 && setCommand(history[1])} aria-label="History down">↓</button>
           </form>
           {guided && <HelpOverlay />}
           {guided && <MobileNav onRun={runCommand} onPrev={prev} onNext={next} />}
         </>
       )}
+      {view === "whoami" && <WhoAmI onBack={() => setView(null)} />}
+      {view === "projects" && <Projects onBack={() => setView(null)} />}
+      {view === "contact" && <Contact onBack={() => setView(null)} />}
+      {view === "info" && <Info onBack={() => setView(null)} />}
     </div>
   );
 }
