@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import TopBar from "./ui/TopBar.jsx";
 import CommandButtons from "./ui/CommandButtons.jsx";
 import HelpOverlay from "./ui/HelpOverlay.jsx";
 import MobileNav from "./ui/MobileNav.jsx";
@@ -170,7 +169,6 @@ export default function Console() {
   return (
     <div className="console">
       <ToggleSwitch checked={guided} onChange={setGuided} />
-      <TopBar />
       {!view && (
         <>
           <div className="console-log" ref={logRef} role="log" aria-live="polite">
