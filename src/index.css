@@ -236,3 +236,14 @@ body {
   color: var(--yellow);
   font-weight: 600;
 }
+
+.mobile-arrows {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-arrows {
+    display: flex;
+    gap: 6px;
+  }
+}

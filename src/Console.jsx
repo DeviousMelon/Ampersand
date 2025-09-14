@@ -164,8 +164,10 @@ export default function Console() {
 
       <div className="console-input">
         <span>&gt;</span>
-        <button className="hist-btn" onClick={prevHistory}>▲</button>
-        <button className="hist-btn" onClick={nextHistory}>▼</button>
+        <div className="mobile-arrows">
+          <button className="hist-btn" onClick={prevHistory}>▲</button>
+          <button className="hist-btn" onClick={nextHistory}>▼</button>
+        </div>
         <input
           ref={inputRef}
           type="text"
