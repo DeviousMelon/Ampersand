@@ -70,6 +70,7 @@ export default function Console() {
     const arg = rest.join(" ");
     if (cmd.toLowerCase() === "clear") {
       clearAll();
+      setCommand("");
       return;
     }
     if (cmd.toLowerCase() === "guided") {
@@ -77,12 +78,14 @@ export default function Console() {
         setGuided(true);
         try { localStorage.setItem("guided", "true"); } catch { }
         appendLog({ type: "response", text: "guided on" });
+        setCommand("");
         return;
       }
       if (arg.toLowerCase() === "off") {
         setGuided(false);
         try { localStorage.setItem("guided", "false"); } catch { }
         appendLog({ type: "response", text: "guided off" });
+        setCommand("");
         return;
       }
     }
@@ -181,13 +184,15 @@ export default function Console() {
               <div key={i} className={item.type === "input" ? "input-line" : "response"}>{item.text}</div>
             ))}
           </div>
-          <CommandButtons
-            onWhoAmI={() => runCommand("whoami")}
-            onProjects={() => runCommand("projects")}
-            onContact={() => runCommand("contact")}
-            onInfo={() => runCommand("info")}
-            onClear={() => runCommand("clear")}
-          />
+          {guided && (
+            <CommandButtons
+              onWhoAmI={() => runCommand("whoami")}
+              onProjects={() => runCommand("projects")}
+              onContact={() => runCommand("contact")}
+              onInfo={() => runCommand("info")}
+              onClear={() => runCommand("clear")}
+            />
+          )}
           <form className="console-input-row" onSubmit={handleSubmit}>
             <input
               ref={inputRef}
