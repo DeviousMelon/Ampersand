@@ -1,25 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
-import TopBar from "./ui/TopBar";
-import CommandButtons from "./ui/CommandButtons";
-import HelpOverlay from "./ui/HelpOverlay";
-import MobileNav from "./ui/MobileNav";
+import TopBar from "./ui/TopBar.jsx";
+import CommandButtons from "./ui/CommandButtons.jsx";
+import HelpOverlay from "./ui/HelpOverlay.jsx";
+import MobileNav from "./ui/MobileNav.jsx";
 import ToggleSwitch from "./ui/ToggleSwitch.jsx";
+import WhoAmI from "./WhoAmI";
+import Projects from "./Projects";
+import Contact from "./Contact";
+import Info from "./Info";
 import "./friendly.css";
 
 export default function Console() {
   const [guided, setGuided] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("guided") || "true"); } catch { return true; }
+    try { return JSON.parse(localStorage.getItem("guided") || "false"); } catch { return false; }
   });
   const [log, setLog] = useState([]);
   const [command, setCommand] = useState("");
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(null);
+  const [view, setView] = useState(null);
   const inputRef = useRef(null);
   const logRef = useRef(null);
 
   useEffect(() => { localStorage.setItem("guided", JSON.stringify(guided)); }, [guided]);
   useEffect(() => { inputRef.current?.focus(); }, []);
   useEffect(() => { logRef.current?.scrollTo(0, logRef.current.scrollHeight); }, [log]);
+
+  const showView = (name) => {
+    setView(name);
+    setLog(prev => [...prev, { type: "output", text: `Opened ${name}.` }]);
+  };
 
   const runCommand = (cmd) => {
     if (!cmd) return;
@@ -29,13 +39,13 @@ export default function Console() {
       window.dispatchEvent(new CustomEvent("help:toggle"));
       setLog(prev => [...prev, { type: "output", text: "Opened help." }]);
     } else if (trimmed === "run(whoami)") {
-      setLog(prev => [...prev, { type: "output", text: "Rendering whoami." }]);
+      showView("whoami");
     } else if (trimmed === "render(Projects)") {
-      setLog(prev => [...prev, { type: "output", text: "Rendering Projects." }]);
+      showView("projects");
     } else if (trimmed === "contact()") {
-      setLog(prev => [...prev, { type: "output", text: "Opening contact." }]);
+      showView("contact");
     } else if (trimmed === "info()") {
-      setLog(prev => [...prev, { type: "output", text: "Opening info." }]);
+      showView("info");
     } else {
       setLog(prev => [...prev, { type: "error", text: "Unknown command." }]);
     }
@@ -70,8 +80,8 @@ export default function Console() {
     }
   };
 
-  const prev = () => setLog(prev => [...prev, { type: "output", text: "Previous item." }]);
-  const next = () => setLog(prev => [...prev, { type: "output", text: "Next item." }]);
+  const prev = () => window.dispatchEvent(new CustomEvent("nav:prev"));
+  const next = () => window.dispatchEvent(new CustomEvent("nav:next"));
 
   useEffect(() => {
     const onKey = (e) => {
@@ -89,6 +99,7 @@ export default function Console() {
       {guided && <TopBar onRun={runCommand} />}
       <h1 className="title">if(&)</h1>
       {guided && <CommandButtons onRun={runCommand} />}
+
       <div className="console-log" ref={logRef}>
         {log.map((line, i) => (
           <div key={i} className={line.type === "input" ? "input-line" : line.type === "error" ? "command-error" : "response"}>
@@ -96,7 +107,15 @@ export default function Console() {
             {line.text}
           </div>
         ))}
+
+        <div className="view-area">
+          {view === "whoami" && <WhoAmI />}
+          {view === "projects" && <Projects />}
+          {view === "contact" && <Contact />}
+          {view === "info" && <Info />}
+        </div>
       </div>
+
       <form className="console-input" onSubmit={onSubmit}>
         <span className="input-line">{">"}</span>
         <input
@@ -107,9 +126,10 @@ export default function Console() {
           placeholder="Type a command or use the buttons"
           aria-label="Console input"
         />
-        <button className="hist-btn" type="button" onClick={prev} aria-label="History up">↑</button>
-        <button className="hist-btn" type="button" onClick={next} aria-label="History down">↓</button>
+        <button className="hist-btn" type="button" onClick={() => runCommand(history[0] || "")} aria-label="History up">↑</button>
+        <button className="hist-btn" type="button" onClick={() => runCommand(history[1] || "")} aria-label="History down">↓</button>
       </form>
+
       {guided && <HelpOverlay />}
       {guided && <MobileNav onRun={runCommand} onPrev={prev} onNext={next} />}
     </div>
