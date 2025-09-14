@@ -29,6 +29,7 @@ export default function Console() {
   useEffect(() => { inputRef.current?.focus(); }, [landing]);
   useEffect(() => { logRef.current?.scrollTo(0, logRef.current.scrollHeight); }, [log]);
 
+  // ESC should only clear console
   useEffect(() => {
     const onEsc = (e) => {
       if (e.key === "Escape") {
@@ -39,10 +40,8 @@ export default function Console() {
         setTimeout(() => {
           setLog([]);
           setGlitchOut(false);
-          setLanding(true);
-          logRef.current?.scrollTo(0, logRef.current.scrollHeight);
           inputRef.current?.focus();
-        }, 400);
+        }, 200);
       }
     };
     window.addEventListener("keydown", onEsc);
@@ -77,7 +76,7 @@ export default function Console() {
       setLog((l) => [...l, { id: l.length, input }]);
       setIsRunning(false);
       logRef.current?.scrollTo(0, logRef.current.scrollHeight);
-    }, 400);
+    }, 300);
   };
 
   const handleCommand = () => execute(command);
@@ -181,6 +180,18 @@ export default function Console() {
             if (e.key === "Enter") {
               e.preventDefault();
               handleCommand();
+            } else if (!inputLocked && e.key === "ArrowUp") {
+              e.preventDefault();
+              prevHistory();
+            } else if (!inputLocked && e.key === "ArrowDown") {
+              e.preventDefault();
+              nextHistory();
+            } else if (e.key === "Tab") {
+              e.preventDefault();
+              if (suggestion) {
+                setCommand(suggestion);
+                setSuggestion("");
+              }
             }
           }}
           autoFocus
