@@ -21,12 +21,13 @@ export default function Console() {
   const [suggestion, setSuggestion] = useState("");
   const [inputLocked, setInputLocked] = useState(false);
   const [glitchOut, setGlitchOut] = useState(false);
+  const [landing, setLanding] = useState(true);
 
   const inputRef = useRef(null);
   const logRef = useRef(null);
 
   useEffect(() => { localStorage.setItem("guided", JSON.stringify(guided)); }, [guided]);
-  useEffect(() => { inputRef.current?.focus(); }, []);
+  useEffect(() => { inputRef.current?.focus(); }, [landing]);
   useEffect(() => { logRef.current?.scrollTo(0, logRef.current.scrollHeight); }, [log]);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export default function Console() {
         setTimeout(() => {
           setLog([]);
           setGlitchOut(false);
+          setLanding(true);
           logRef.current?.scrollTo(0, logRef.current.scrollHeight);
           inputRef.current?.focus();
         }, 400);
@@ -46,18 +48,6 @@ export default function Console() {
     };
     window.addEventListener("keydown", onEsc);
     return () => window.removeEventListener("keydown", onEsc);
-  }, []);
-
-  useEffect(() => {
-    const inp = inputRef.current;
-    if (!inp) return;
-    const handleFocus = () => {
-      setTimeout(() => {
-        inp.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 100);
-    };
-    inp.addEventListener("focus", handleFocus);
-    return () => inp.removeEventListener("focus", handleFocus);
   }, []);
 
   const normalizeCmd = (c) => {
@@ -79,6 +69,7 @@ export default function Console() {
       setCommand("");
       return;
     }
+    setLanding(false);
     setCommand("");
     setHistory((h) => [...h, input]);
     setHistoryIndex(null);
@@ -87,7 +78,7 @@ export default function Console() {
       setLog((l) => [...l, { id: l.length, input }]);
       setIsRunning(false);
       logRef.current?.scrollTo(0, logRef.current.scrollHeight);
-    }, 500);
+    }, 400);
   };
 
   const handleCommand = () => execute(command);
@@ -129,16 +120,24 @@ export default function Console() {
     setCommand(idx === null ? "" : history[idx]);
   };
 
+  if (landing) {
+    return (
+      <div className="landing">
+        <h1>if(&)</h1>
+        <p>// an interactive portfolio</p>
+        <button className="enter-btn" onClick={() => setLanding(false)}>enter ↵</button>
+      </div>
+    );
+  }
+
   return (
     <div className="console">
-      <ToggleSwitch checked={guided} onChange={setGuided} />
+      <div className="top-bar">
+        <ToggleSwitch checked={guided} onChange={setGuided} label="Guided" />
+      </div>
       <h1 className="title">if(&)</h1>
 
-      {guided && (
-        <CommandButtons
-          onRun={(c) => execute(normalizeCmd(c))}
-        />
-      )}
+      {guided && <CommandButtons onRun={(c) => execute(normalizeCmd(c))} />}
 
       <div ref={logRef} className={`console-log${glitchOut ? " glitch-out" : ""}`}>
         {log.map(({ id, input }) => (
@@ -168,18 +167,6 @@ export default function Console() {
             if (e.key === "Enter") {
               e.preventDefault();
               handleCommand();
-            } else if (!inputLocked && e.key === "ArrowUp") {
-              e.preventDefault();
-              prevHistory();
-            } else if (!inputLocked && e.key === "ArrowDown") {
-              e.preventDefault();
-              nextHistory();
-            } else if (e.key === "Tab") {
-              e.preventDefault();
-              if (suggestion) {
-                setCommand(suggestion);
-                setSuggestion("");
-              }
             }
           }}
           autoFocus
