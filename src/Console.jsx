@@ -12,8 +12,9 @@ import "./friendly.css";
 
 export default function Console() {
   const [guided, setGuided] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("guided") || "false"); } catch { return false; }
+    try { return JSON.parse(localStorage.getItem("guided") ?? "false"); } catch { return false; }
   });
+  const [showLanding, setShowLanding] = useState(true);
   const [log, setLog] = useState([]);
   const [command, setCommand] = useState("");
   const [history, setHistory] = useState([]);
@@ -27,17 +28,19 @@ export default function Console() {
   useEffect(() => { logRef.current?.scrollTo(0, logRef.current.scrollHeight); }, [log]);
 
   const showView = (name) => {
+    setShowLanding(false);
     setView(name);
-    setLog(prev => [...prev, { type: "output", text: `Opened ${name}.` }]);
+    setLog((prev) => [...prev, { type: "output", text: `Opened ${name}.` }]);
   };
 
   const runCommand = (cmd) => {
     if (!cmd) return;
     const trimmed = cmd.trim();
-    setLog(prev => [...prev, { type: "input", text: trimmed }]);
+    setShowLanding(false);
+    setLog((prev) => [...prev, { type: "input", text: trimmed }]);
     if (trimmed === "help()" || trimmed === "help") {
       window.dispatchEvent(new CustomEvent("help:toggle"));
-      setLog(prev => [...prev, { type: "output", text: "Opened help." }]);
+      setLog((prev) => [...prev, { type: "output", text: "Opened help." }]);
     } else if (trimmed === "run(whoami)") {
       showView("whoami");
     } else if (trimmed === "render(Projects)") {
@@ -47,9 +50,9 @@ export default function Console() {
     } else if (trimmed === "info()") {
       showView("info");
     } else {
-      setLog(prev => [...prev, { type: "error", text: "Unknown command." }]);
+      setLog((prev) => [...prev, { type: "error", text: "Unknown command." }]);
     }
-    setHistory(prev => [trimmed, ...prev]);
+    setHistory((prev) => [trimmed, ...prev]);
     setHistoryIndex(null);
     setCommand("");
   };
@@ -60,6 +63,15 @@ export default function Console() {
   };
 
   const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setLog([]);
+      setView(null);
+      setCommand("");
+      setShowLanding(true);
+      setGuided(false);
+      try { localStorage.removeItem("guided"); } catch { }
+      return;
+    }
     if (e.key === "ArrowUp") {
       e.preventDefault();
       const nextIndex = historyIndex === null ? 0 : Math.min(historyIndex + 1, history.length - 1);
@@ -97,41 +109,52 @@ export default function Console() {
     <div className="console">
       <ToggleSwitch checked={guided} onChange={setGuided} />
       {guided && <TopBar onRun={runCommand} />}
-      <h1 className="title">if(&)</h1>
-      {guided && <CommandButtons onRun={runCommand} />}
-
-      <div className="console-log" ref={logRef}>
-        {log.map((line, i) => (
-          <div key={i} className={line.type === "input" ? "input-line" : line.type === "error" ? "command-error" : "response"}>
-            {line.type === "input" ? "> " : ""}
-            {line.text}
-          </div>
-        ))}
-
-        <div className="view-area">
-          {view === "whoami" && <WhoAmI />}
-          {view === "projects" && <Projects />}
-          {view === "contact" && <Contact />}
-          {view === "info" && <Info />}
+      {showLanding ? (
+        <div className="landing-screen">
+          <div className="glitch-title">if(&)</div>
+          <button className="enter-button" onClick={() => setShowLanding(false)}>Enter</button>
         </div>
-      </div>
-
-      <form className="console-input" onSubmit={onSubmit}>
-        <span className="input-line">{">"}</span>
-        <input
-          ref={inputRef}
-          value={command}
-          onChange={(e) => setCommand(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type a command or use the buttons"
-          aria-label="Console input"
-        />
-        <button className="hist-btn" type="button" onClick={() => runCommand(history[0] || "")} aria-label="History up">↑</button>
-        <button className="hist-btn" type="button" onClick={() => runCommand(history[1] || "")} aria-label="History down">↓</button>
-      </form>
-
-      {guided && <HelpOverlay />}
-      {guided && <MobileNav onRun={runCommand} onPrev={prev} onNext={next} />}
+      ) : (
+        <>
+          <h1 className="title">if(&)</h1>
+          {guided && <CommandButtons onRun={runCommand} />}
+          <div className="console-log" ref={logRef}>
+            {log.map((line, i) => (
+              <div
+                key={i}
+                className={
+                  line.type === "input" ? "input-line" :
+                    line.type === "error" ? "command-error" : "response"
+                }
+              >
+                {line.type === "input" ? "> " : ""}
+                {line.text}
+              </div>
+            ))}
+            <div className="view-area">
+              {view === "whoami" && <WhoAmI />}
+              {view === "projects" && <Projects />}
+              {view === "contact" && <Contact />}
+              {view === "info" && <Info />}
+            </div>
+          </div>
+          <form className="console-input" onSubmit={onSubmit}>
+            <span className="input-line">{">"}</span>
+            <input
+              ref={inputRef}
+              value={command}
+              onChange={(e) => setCommand(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type a command or use the buttons"
+              aria-label="Console input"
+            />
+            <button className="hist-btn" type="button" onClick={() => history[0] && setCommand(history[0])} aria-label="History up">↑</button>
+            <button className="hist-btn" type="button" onClick={() => history[1] && setCommand(history[1])} aria-label="History down">↓</button>
+          </form>
+          {guided && <HelpOverlay />}
+          {guided && <MobileNav onRun={runCommand} onPrev={prev} onNext={next} />}
+        </>
+      )}
     </div>
   );
 }
