@@ -1,24 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
-import CommandButtons from "./ui/CommandButtons.jsx";
-import HelpOverlay from "./ui/HelpOverlay.jsx";
-import MobileNav from "./ui/MobileNav.jsx";
+import CommandButtons from "./ui/CommandButtons";
+import HelpOverlay from "./ui/HelpOverlay";
+import MobileNav from "./ui/MobileNav";
 import ToggleSwitch from "./ui/ToggleSwitch.jsx";
-import WhoAmI from "./WhoAmI";
-import Projects from "./Projects";
-import Contact from "./Contact";
-import Info from "./Info";
 import "./friendly.css";
 
 export default function Console() {
-  const [guided, setGuided] = useState(false);
-  const [showLanding, setShowLanding] = useState(true);
-  const [command, setCommand] = useState("");
+  const [guided, setGuided] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("guided") || "false"); } catch { return false; }
+  });
   const [log, setLog] = useState([]);
+  const [command, setCommand] = useState("");
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(null);
-  const [view, setView] = useState(null);
   const inputRef = useRef(null);
   const logRef = useRef(null);
+
+  useEffect(() => { localStorage.setItem("guided", JSON.stringify(guided)); }, [guided]);
+  useEffect(() => { inputRef.current?.focus(); }, []);
+  useEffect(() => { logRef.current?.scrollTo(0, logRef.current.scrollHeight); }, [log]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -26,109 +26,46 @@ export default function Console() {
         window.dispatchEvent(new CustomEvent("help:toggle"));
       }
       if (e.key === "Escape") {
-        try {
-          const input = document.querySelector("input.console-input");
-          if (input) input.blur();
-        } catch { }
         setLog([]);
-        setView(null);
         setCommand("");
-        setShowLanding(true);
-        setGuided(false);
-        try { localStorage.removeItem("guided"); } catch { }
-        return;
+        setHistoryIndex(null);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  useEffect(() => { inputRef.current?.focus(); }, [view, guided, showLanding]);
-
-  const appendLog = (items) => {
-    setLog((prev) => {
-      const next = Array.isArray(items) ? [...prev, ...items] : [...prev, items];
-      return next;
-    });
-  };
-
-  const clearAll = () => {
-    setLog([]);
-    setView(null);
-    setCommand("");
-    setShowLanding(true);
-  };
-
-  const parseAndRoute = (val) => {
-    const s = val.trim();
-    if (!s) return null;
-    const lower = s.toLowerCase();
-    if (lower === "clear") return { t: "clear" };
-    if (lower === "guided on") return { t: "guided", v: true };
-    if (lower === "guided off") return { t: "guided", v: false };
-    if (/^run\(\s*whoami\s*\)$/i.test(s) || ["whoami", "who", "me"].includes(lower)) return { t: "view", v: "whoami" };
-    if (/^render\(\s*projects\s*\)$/i.test(s) || ["projects", "proj"].includes(lower)) return { t: "view", v: "projects" };
-    if (/^contact\(\s*\)$/i.test(s) || ["contact", "email"].includes(lower)) return { t: "view", v: "contact" };
-    if (/^(info|about|help)\(\s*\)$/i.test(s) || ["info", "about", "help"].includes(lower)) return { t: "view", v: "info" };
-    if (/^next$/i.test(s)) return { t: "nav", v: "next" };
-    if (/^prev$/i.test(s)) return { t: "nav", v: "prev" };
-    return { t: "unknown", v: s };
-  };
-
-  const runCommand = (raw) => {
-    const value = (raw ?? command).trim();
-    if (!value) return;
-    setHistory((h) => [value, ...h.slice(0, 49)]);
+  const runCommand = (cmd) => {
+    if (!cmd) return;
+    const trimmed = cmd.trim();
+    setLog(prev => [...prev, { type: "input", text: trimmed }]);
+    if (trimmed === "help()" || trimmed === "help") {
+      window.dispatchEvent(new CustomEvent("help:toggle"));
+      setLog(prev => [...prev, { type: "output", text: "Opened help." }]);
+    } else if (trimmed === "run(whoami)" || trimmed === "whoami") {
+      setLog(prev => [...prev, { type: "output", text: "Rendering whoami." }]);
+    } else if (trimmed === "render(Projects)" || trimmed.toLowerCase() === "projects") {
+      setLog(prev => [...prev, { type: "output", text: "Rendering Projects." }]);
+    } else if (trimmed === "contact()" || trimmed.toLowerCase() === "contact") {
+      setLog(prev => [...prev, { type: "output", text: "Opening contact." }]);
+    } else if (trimmed === "info()" || trimmed.toLowerCase() === "info") {
+      setLog(prev => [...prev, { type: "output", text: "Opening info." }]);
+    } else if (trimmed === "clear" || trimmed === "cls") {
+      setLog([]);
+    } else {
+      setLog(prev => [...prev, { type: "error", text: "Unknown command." }]);
+    }
+    setHistory(prev => [trimmed, ...prev]);
     setHistoryIndex(null);
-    appendLog({ type: "input", text: `> ${value}` });
-    const parsed = parseAndRoute(value);
-    if (!parsed) return;
-    if (parsed.t === "clear") {
-      clearAll();
-      setCommand("");
-      return;
-    }
-    if (parsed.t === "guided") {
-      setGuided(!!parsed.v);
-      try { localStorage.setItem("guided", parsed.v ? "true" : "false"); } catch { }
-      appendLog({ type: "response", text: parsed.v ? "guided on" : "guided off" });
-      setCommand("");
-      return;
-    }
-    if (parsed.t === "view") {
-      setView(parsed.v);
-      setShowLanding(false);
-      appendLog({ type: "response", text: `loading ${parsed.v}` });
-      setCommand("");
-      return;
-    }
-    if (parsed.t === "nav") {
-      window.dispatchEvent(new CustomEvent(parsed.v === "next" ? "guided:next" : "guided:prev"));
-      setCommand("");
-      return;
-    }
-    appendLog({ type: "response", text: `unknown command: ${value}` });
     setCommand("");
   };
 
-  const prev = () => window.dispatchEvent(new CustomEvent("guided:prev"));
-  const next = () => window.dispatchEvent(new CustomEvent("guided:next"));
-
-  const handleSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    runCommand();
+    runCommand(command);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Escape") {
-      setLog([]);
-      setView(null);
-      setCommand("");
-      setShowLanding(true);
-      setGuided(false);
-      try { localStorage.removeItem("guided"); } catch { }
-      return;
-    }
     if (e.key === "ArrowUp") {
       e.preventDefault();
       const nextIndex = historyIndex === null ? 0 : Math.min(historyIndex + 1, history.length - 1);
@@ -148,51 +85,45 @@ export default function Console() {
       }
     } else if (e.key === "Enter") {
       e.preventDefault();
-      runCommand();
+      runCommand(command);
+    } else if (e.key === "Escape") {
+      setLog([]);
+      setCommand("");
+      setHistoryIndex(null);
     }
   };
+
+  const prev = () => setLog(prev => [...prev, { type: "output", text: "Previous item." }]);
+  const next = () => setLog(prev => [...prev, { type: "output", text: "Next item." }]);
 
   return (
     <div className="console">
       <ToggleSwitch checked={guided} onChange={setGuided} />
-      {!view && (
-        <>
-          <div className="console-log" ref={logRef} role="log" aria-live="polite">
-            {showLanding && (
-              <div className="landing">
-                <div className="title">if(&)</div>
-                <div className="subtitle">type a command or use the buttons</div>
-              </div>
-            )}
-            {log.map((item, i) => (
-              <div key={i} className={item.type === "input" ? "input-line" : "response"}>{item.text}</div>
-            ))}
+      <h1 className="title">if(&)</h1>
+      {guided && <CommandButtons onRun={runCommand} />}
+      <div className="console-log" ref={logRef}>
+        {log.map((line, i) => (
+          <div key={i} className={line.type === "input" ? "input-line" : line.type === "error" ? "command-error" : "response"}>
+            {line.type === "input" ? "> " : ""}
+            {line.text}
           </div>
-          {guided && (
-            <CommandButtons onRun={runCommand} />
-          )}
-          <form className="console-input-row" onSubmit={handleSubmit}>
-            <input
-              ref={inputRef}
-              className="console-input"
-              type="text"
-              value={command}
-              onChange={(e) => setCommand(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Type a command or use the buttons"
-              aria-label="Console input"
-            />
-            <button className="hist-btn" type="button" onClick={() => history.length > 0 && setCommand(history[0])} aria-label="History up">↑</button>
-            <button className="hist-btn" type="button" onClick={() => history.length > 1 && setCommand(history[1])} aria-label="History down">↓</button>
-          </form>
-          {guided && <HelpOverlay />}
-          {guided && <MobileNav onRun={runCommand} onPrev={prev} onNext={next} />}
-        </>
-      )}
-      {view === "whoami" && <WhoAmI onBack={() => setView(null)} />}
-      {view === "projects" && <Projects onBack={() => setView(null)} />}
-      {view === "contact" && <Contact onBack={() => setView(null)} />}
-      {view === "info" && <Info onBack={() => setView(null)} />}
+        ))}
+      </div>
+      <form className="console-input" onSubmit={onSubmit}>
+        <span className="input-line">{">"}</span>
+        <input
+          ref={inputRef}
+          value={command}
+          onChange={(e) => setCommand(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Type a command or use the buttons"
+          aria-label="Console input"
+        />
+        <button className="hist-btn" type="button" onClick={prev} aria-label="History up">↑</button>
+        <button className="hist-btn" type="button" onClick={next} aria-label="History down">↓</button>
+      </form>
+      {guided && <HelpOverlay />}
+      {guided && <MobileNav onRun={runCommand} onPrev={prev} onNext={next} />}
     </div>
   );
 }
