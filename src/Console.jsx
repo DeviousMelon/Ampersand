@@ -27,7 +27,7 @@ export default function Console() {
       }
       if (e.key === "Escape") {
         try {
-          const input = document.querySelector('input.console-input');
+          const input = document.querySelector("input.console-input");
           if (input) input.blur();
         } catch { }
         setLog([]);
@@ -59,65 +59,51 @@ export default function Console() {
     setShowLanding(true);
   };
 
+  const parseAndRoute = (val) => {
+    const s = val.trim();
+    if (!s) return null;
+    const lower = s.toLowerCase();
+    if (lower === "clear") return { t: "clear" };
+    if (lower === "guided on") return { t: "guided", v: true };
+    if (lower === "guided off") return { t: "guided", v: false };
+    if (/^run\(\s*whoami\s*\)$/i.test(s) || ["whoami", "who", "me"].includes(lower)) return { t: "view", v: "whoami" };
+    if (/^render\(\s*projects\s*\)$/i.test(s) || ["projects", "proj"].includes(lower)) return { t: "view", v: "projects" };
+    if (/^contact\(\s*\)$/i.test(s) || ["contact", "email"].includes(lower)) return { t: "view", v: "contact" };
+    if (/^(info|about|help)\(\s*\)$/i.test(s) || ["info", "about", "help"].includes(lower)) return { t: "view", v: "info" };
+    if (/^next$/i.test(s)) return { t: "nav", v: "next" };
+    if (/^prev$/i.test(s)) return { t: "nav", v: "prev" };
+    return { t: "unknown", v: s };
+  };
+
   const runCommand = (raw) => {
     const value = (raw ?? command).trim();
     if (!value) return;
     setHistory((h) => [value, ...h.slice(0, 49)]);
     setHistoryIndex(null);
     appendLog({ type: "input", text: `> ${value}` });
-    const [cmd, ...rest] = value.split(/\s+/);
-    const arg = rest.join(" ");
-    if (cmd.toLowerCase() === "clear") {
+    const parsed = parseAndRoute(value);
+    if (!parsed) return;
+    if (parsed.t === "clear") {
       clearAll();
       setCommand("");
       return;
     }
-    if (cmd.toLowerCase() === "guided") {
-      if (arg.toLowerCase() === "on") {
-        setGuided(true);
-        try { localStorage.setItem("guided", "true"); } catch { }
-        appendLog({ type: "response", text: "guided on" });
-        setCommand("");
-        return;
-      }
-      if (arg.toLowerCase() === "off") {
-        setGuided(false);
-        try { localStorage.setItem("guided", "false"); } catch { }
-        appendLog({ type: "response", text: "guided off" });
-        setCommand("");
-        return;
-      }
-    }
-    if (["whoami", "who", "me"].includes(cmd.toLowerCase())) {
-      setView("whoami");
-      setShowLanding(false);
-      appendLog({ type: "response", text: "loading whoami" });
+    if (parsed.t === "guided") {
+      setGuided(!!parsed.v);
+      try { localStorage.setItem("guided", parsed.v ? "true" : "false"); } catch { }
+      appendLog({ type: "response", text: parsed.v ? "guided on" : "guided off" });
       setCommand("");
       return;
     }
-    if (["projects", "proj"].includes(cmd.toLowerCase())) {
-      setView("projects");
+    if (parsed.t === "view") {
+      setView(parsed.v);
       setShowLanding(false);
-      appendLog({ type: "response", text: "loading projects" });
+      appendLog({ type: "response", text: `loading ${parsed.v}` });
       setCommand("");
       return;
     }
-    if (["contact", "email"].includes(cmd.toLowerCase())) {
-      setView("contact");
-      setShowLanding(false);
-      appendLog({ type: "response", text: "loading contact" });
-      setCommand("");
-      return;
-    }
-    if (["info", "about", "help"].includes(cmd.toLowerCase())) {
-      setView("info");
-      setShowLanding(false);
-      appendLog({ type: "response", text: "loading info" });
-      setCommand("");
-      return;
-    }
-    if (["next", "prev"].includes(cmd.toLowerCase())) {
-      window.dispatchEvent(new CustomEvent(cmd.toLowerCase() === "next" ? "guided:next" : "guided:prev"));
+    if (parsed.t === "nav") {
+      window.dispatchEvent(new CustomEvent(parsed.v === "next" ? "guided:next" : "guided:prev"));
       setCommand("");
       return;
     }
@@ -183,13 +169,7 @@ export default function Console() {
             ))}
           </div>
           {guided && (
-            <CommandButtons
-              onWhoAmI={() => runCommand("whoami")}
-              onProjects={() => runCommand("projects")}
-              onContact={() => runCommand("contact")}
-              onInfo={() => runCommand("info")}
-              onClear={() => runCommand("clear")}
-            />
+            <CommandButtons onRun={runCommand} />
           )}
           <form className="console-input-row" onSubmit={handleSubmit}>
             <input
